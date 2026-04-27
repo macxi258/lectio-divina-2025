@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1A2B4A"/>
+  <g transform="translate(256, 280)" fill="#C4A052" font-family="Georgia, serif" text-anchor="middle">
+    <text font-size="320" dominant-baseline="middle">✝</text>
+  </g>
+</svg>

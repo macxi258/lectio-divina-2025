@@ -1,0 +1,21 @@
+To move to android I needed
+npm install @capacitor/core @capacitor/cli
+npx cap init
+npm run build
+npx cap sync
+JAVA_HOME = C:\Program Files\Java\jdk-21
+npx cap add android
+npx cap copy
+cd android
+./gradlew assembleDebug
+
+
+export default {
+  appId: 'com.example.app',
+  appName: 'MyApp',
+  webDir: 'dist'
+};
+
+
+
+npm run build && npx cap copy && cd android && gradlew assembleDebug
