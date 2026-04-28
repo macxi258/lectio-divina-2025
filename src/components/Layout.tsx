@@ -20,7 +20,7 @@ export default function Layout({ children }: Props) {
   const isSession = location.pathname.startsWith('/session');
 
   return (
-    <div className="h-dvh bg-cream flex flex-col">
+    <div className="h-full bg-cream flex flex-col">
       {!isSession && (
         <header className="bg-navy text-gold px-6 pt-safe py-4 flex items-center justify-between flex-shrink-0">
           <Link to="/" className="flex items-center gap-2">

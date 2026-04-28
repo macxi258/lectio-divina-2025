@@ -7,10 +7,11 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   plugins: {
     Keyboard: {
-      // Shrinks the webview body when the keyboard appears, so our flex
-      // layout (h-dvh + flex-1 scroll area) automatically lifts the
-      // Continue button above the keyboard.
-      resize: KeyboardResize.Body,
+      // Resize the entire native WebView frame when the keyboard appears.
+      // This makes 100dvh / h-full / flex-1 all shrink correctly so the
+      // step header stays pinned at the top and the textarea simply gets
+      // shorter — instead of the page scrolling and the header sliding up.
+      resize: KeyboardResize.Native,
       resizeOnFullScreen: true,
     },
   },

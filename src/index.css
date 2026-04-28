@@ -34,7 +34,12 @@
   }
 
   #root {
-    height: 100dvh;
+    /* Use the visual viewport height when JS has set --vvh (browsers / PWA),
+       falling back to 100dvh for the very first paint and for native
+       Capacitor where main.tsx doesn't set the variable. The visual
+       viewport accurately reflects the area NOT covered by the on-screen
+       keyboard, so the layout shrinks correctly when typing in a textarea. */
+    height: var(--vvh, 100dvh);
     max-width: 480px;
     margin: 0 auto;
     box-shadow: 0 0 40px rgba(0,0,0,0.08);
