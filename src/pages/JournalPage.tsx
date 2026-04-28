@@ -147,6 +147,12 @@ export function JournalEntryPage() {
   const [showTagInput, setShowTagInput] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showPassage, setShowPassage] = useState(true);
+  // Track which reflection sections are expanded (collapsed by default).
+  const [expandedReflections, setExpandedReflections] = useState<Record<string, boolean>>({});
+
+  function toggleReflection(title: string) {
+    setExpandedReflections((e) => ({ ...e, [title]: !e[title] }));
+  }
 
   if (!session || !id) {
     return (
@@ -224,13 +230,38 @@ export function JournalEntryPage() {
           )}
         </div>
 
-        {/* Reflections */}
-        {sections.map(({ title, text, color }) => (
-          <div key={title} className={`bg-white rounded-2xl p-5 shadow-sm border-l-4 ${color} min-w-0`}>
-            <p className="text-xs text-warm-400 uppercase tracking-wide mb-2">{title}</p>
-            <p className="font-serif text-warm-700 text-sm leading-relaxed whitespace-pre-wrap break-words">{text}</p>
+        {/* Collapsible reflection cards */}
+        {sections.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <h2 className="font-serif text-navy font-medium text-lg">Your Reflections</h2>
+            {sections.map(({ title, text, color }) => {
+              const isOpen = expandedReflections[title] ?? false;
+              return (
+                <div
+                  key={title}
+                  className={`bg-white rounded-2xl shadow-sm border-l-4 ${color} min-w-0 flex-shrink-0 overflow-hidden`}
+                >
+                  <button
+                    onClick={() => toggleReflection(title)}
+                    className="w-full flex items-center justify-between gap-3 px-5 py-3 text-left hover:bg-warm-50 transition-colors"
+                  >
+                    <p className="text-xs text-navy uppercase tracking-wide font-semibold">{title}</p>
+                    {isOpen
+                      ? <ChevronUp size={18} className="text-navy" />
+                      : <ChevronDown size={18} className="text-navy" />}
+                  </button>
+                  {isOpen && (
+                    <div className="border-t border-warm-100 px-5 py-3 max-h-64 overflow-y-auto">
+                      <p className="font-serif text-warm-700 text-sm leading-relaxed whitespace-pre-wrap break-words">
+                        {text}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        ))}
+        )}
 
         {/* Intentions */}
         {session.intentions.length > 0 && (
