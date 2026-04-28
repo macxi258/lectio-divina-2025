@@ -15,6 +15,11 @@
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Lock the document so only the inner scroll area moves. Without this,
+       installed PWAs end up scrolling the whole page (header + nav included)
+       when content is taller than the visible viewport. */
+    height: 100%;
+    overflow: hidden;
   }
 
   body {
@@ -22,16 +27,18 @@
     background-color: #FAF7F2;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Belt-and-suspenders: also block touch zoom gestures at the body level. */
     touch-action: manipulation;
     overscroll-behavior: none;
+    height: 100%;
+    overflow: hidden;
   }
 
   #root {
-    min-height: 100svh;
+    height: 100dvh;
     max-width: 480px;
     margin: 0 auto;
     box-shadow: 0 0 40px rgba(0,0,0,0.08);
+    overflow: hidden;
   }
 }
 
@@ -45,14 +52,25 @@
   .pb-safe {
     padding-bottom: 1.5rem;
   }
-  /* Native Capacitor app only: layout extends edge-to-edge behind the
-     status bar and gesture handle, so we add the OS-reported insets to
-     keep content reachable. */
+  /* Native Capacitor app: layout extends edge-to-edge behind the status
+     bar and gesture handle, so we add the OS-reported insets to keep
+     content reachable. */
   html.native .pt-safe {
     padding-top: max(env(safe-area-inset-top, 0px), 1rem);
   }
   html.native .pb-safe {
     padding-bottom: max(env(safe-area-inset-bottom, 0px), 1.5rem);
+  }
+  /* Installed PWA (Add to Home Screen): same situation as native — the
+     browser chrome is gone, so the system bars overlap our content
+     unless we pad for them. */
+  @media (display-mode: standalone) {
+    .pt-safe {
+      padding-top: max(env(safe-area-inset-top, 0px), 1rem);
+    }
+    .pb-safe {
+      padding-bottom: max(env(safe-area-inset-bottom, 0px), 1.5rem);
+    }
   }
   .line-clamp-2 {
     display: -webkit-box;
