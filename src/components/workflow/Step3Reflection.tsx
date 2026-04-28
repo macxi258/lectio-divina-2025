@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import StepHeader from '../shared/StepHeader';
 import Button from '../shared/Button';
@@ -14,18 +14,8 @@ export default function Step3Reflection({ sessionId, onNext, onBack }: Props) {
   const session = useStore((s) => s.getSession(sessionId));
   const updateSession = useStore((s) => s.updateSession);
   const [showPassage, setShowPassage] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (!session) return null;
-
-  // When the textarea gains focus on mobile, the keyboard appears and may
-  // cover it. Scroll it into view after a short delay so the focused element
-  // stays visible above the keyboard.
-  function handleFocus() {
-    setTimeout(() => {
-      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
-  }
 
 
   return (
@@ -69,10 +59,8 @@ export default function Step3Reflection({ sessionId, onNext, onBack }: Props) {
       {/* Scrollable reflection textarea fills remaining space */}
       <div className="flex-1 min-h-0 px-5 pb-2 flex flex-col">
         <textarea
-          ref={textareaRef}
           value={session.step3Text}
           onChange={(e) => updateSession(sessionId, { step3Text: e.target.value })}
-          onFocus={handleFocus}
           placeholder="Write what the Lord has spoken to you…"
           className="flex-1 min-h-0 w-full resize-none bg-white border border-warm-200 rounded-xl px-4 py-3 text-navy text-base placeholder-warm-300 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold transition-colors font-serif leading-relaxed overflow-y-auto shadow-sm"
         />
