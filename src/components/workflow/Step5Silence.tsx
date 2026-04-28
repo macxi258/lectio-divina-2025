@@ -232,7 +232,7 @@ export default function Step5Silence({ onNext, onBack }: Props) {
         </div>
       </div>
 
-      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-navy border-t border-white/10">
+      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-navy border-t border-white/10 pb-safe">
         <Button
           className="w-full bg-gold/20 hover:bg-gold/30 text-gold border border-gold/30"
           size="lg"

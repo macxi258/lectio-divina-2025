@@ -36,8 +36,18 @@
 }
 
 @layer utilities {
+  /* Top safe-area inset — keeps content below the status bar / notch.
+     Always at least 1rem (16px) so layouts still breathe on devices
+     without a notch. */
   .pt-safe {
-    padding-top: env(safe-area-inset-top, 0px);
+    padding-top: max(env(safe-area-inset-top, 0px), 1rem);
+  }
+  /* Bottom safe-area inset — used on every fixed-bottom action bar so the
+     system gesture/navigation handle doesn't overlap our buttons. Always
+     at least 1.25rem (20px) so the button stays comfortably above the
+     edge on devices without a software nav bar. */
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 1.5rem);
   }
   .line-clamp-2 {
     display: -webkit-box;

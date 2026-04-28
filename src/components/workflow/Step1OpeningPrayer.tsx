@@ -82,7 +82,7 @@ export default function Step1OpeningPrayer({ sessionId, onNext }: Props) {
         </p>
       </div>
 
-      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100">
+      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100 pb-safe">
         <Button className="w-full" size="lg" onClick={onNext}>
           Continue to Reading
         </Button>

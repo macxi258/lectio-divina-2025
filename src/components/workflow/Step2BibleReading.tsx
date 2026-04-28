@@ -98,7 +98,7 @@ export default function Step2BibleReading({ sessionId, onNext, onBack }: Props) 
         </div>
       </div>
 
-      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100">
+      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100 pb-safe">
         <Button className="w-full" size="lg" onClick={onNext}>
           Continue to Reflection
         </Button>

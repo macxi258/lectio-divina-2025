@@ -247,7 +247,7 @@ export default function BibleBrowserPage() {
 
   return (
     <div className="h-full bg-cream flex flex-col">
-      <div className="bg-navy text-white px-5 pt-4 pb-5 flex-shrink-0">
+      <div className="bg-navy text-white px-5 pt-safe pb-5 flex-shrink-0">
         <h1 className="font-serif text-xl font-medium mb-3">Choose a Passage</h1>
 
         <div className="relative">

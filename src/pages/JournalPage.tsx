@@ -42,7 +42,7 @@ export function JournalListPage() {
 
   return (
     <div className="h-full flex flex-col bg-cream">
-      <div className="bg-navy text-white px-5 pt-4 pb-5 flex-shrink-0">
+      <div className="bg-navy text-white px-5 pt-safe pb-5 flex-shrink-0">
         {/* Title row + Favourites toggle */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <h1 className="font-serif text-xl font-medium">Journal</h1>
@@ -175,7 +175,7 @@ export function JournalEntryPage() {
   return (
     <div className="h-full flex flex-col bg-cream">
       {/* Compact header — favourite star sits on the same row as the reference */}
-      <div className="bg-navy text-white px-5 pt-4 pb-4 flex-shrink-0">
+      <div className="bg-navy text-white px-5 pt-safe pb-4 flex-shrink-0">
         <p className="text-gold/80 text-xs uppercase tracking-widest mb-1 font-medium">Scripture</p>
         <div className="flex items-center justify-between gap-3">
           <h1 className="font-serif text-2xl font-medium min-w-0 break-words">{session.scriptureRef}</h1>

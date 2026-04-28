@@ -22,7 +22,7 @@ export default function Layout({ children }: Props) {
   return (
     <div className="h-dvh bg-cream flex flex-col">
       {!isSession && (
-        <header className="bg-navy text-gold px-6 py-4 flex items-center justify-between flex-shrink-0">
+        <header className="bg-navy text-gold px-6 pt-safe py-4 flex items-center justify-between flex-shrink-0">
           <Link to="/" className="flex items-center gap-2">
             <span className="text-gold text-xl">✝</span>
             <span className="font-serif text-lg tracking-wide">Lectio Divina</span>
@@ -38,7 +38,7 @@ export default function Layout({ children }: Props) {
       </main>
 
       {!isSession && user && (
-        <nav className="bg-white border-t border-warm-200 flex flex-shrink-0">
+        <nav className="bg-white border-t border-warm-200 flex flex-shrink-0 pb-safe">
           {nav.map(({ to, icon: Icon, label }) => {
             const active = location.pathname === to;
             return (

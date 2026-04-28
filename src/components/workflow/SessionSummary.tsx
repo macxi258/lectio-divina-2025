@@ -109,7 +109,7 @@ export default function SessionSummary({ sessionId }: Props) {
       </div>
 
       {/* Fixed bottom action buttons */}
-      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100 flex flex-col gap-2 max-w-lg mx-auto w-full">
+      <div className="flex-shrink-0 px-5 pb-6 pt-3 bg-cream border-t border-warm-100 flex flex-col gap-2 max-w-lg mx-auto w-full pb-safe">
         <Button
           variant="secondary"
           size="lg"
