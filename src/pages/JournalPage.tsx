@@ -43,7 +43,19 @@ export function JournalListPage() {
   return (
     <div className="h-full flex flex-col bg-cream">
       <div className="bg-navy text-white px-5 pt-4 pb-5 flex-shrink-0">
-        <h1 className="font-serif text-xl font-medium mb-3">Journal</h1>
+        {/* Title row + Favourites toggle */}
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h1 className="font-serif text-xl font-medium">Journal</h1>
+          <button
+            onClick={() => setFilterFav((v) => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              filterFav ? 'bg-gold text-navy' : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            <Star size={12} />
+            Favourites
+          </button>
+        </div>
 
         {/* Search */}
         <div className="relative mb-3">
@@ -57,30 +69,23 @@ export function JournalListPage() {
           />
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setFilterFav((v) => !v)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              filterFav ? 'bg-gold text-navy' : 'bg-white/10 text-white/70 hover:bg-white/20'
-            }`}
-          >
-            <Star size={12} />
-            Favourites
-          </button>
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setFilterTag((t) => (t === tag ? '' : tag))}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                filterTag === tag ? 'bg-gold text-navy' : 'bg-white/10 text-white/70 hover:bg-white/20'
-              }`}
-            >
-              <Tag size={10} />
-              {tag}
-            </button>
-          ))}
-        </div>
+        {/* Tag filters (only shown when there are tags) */}
+        {allTags.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setFilterTag((t) => (t === tag ? '' : tag))}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  filterTag === tag ? 'bg-gold text-navy' : 'bg-white/10 text-white/70 hover:bg-white/20'
+                }`}
+              >
+                <Tag size={10} />
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 py-5 flex flex-col gap-3">
