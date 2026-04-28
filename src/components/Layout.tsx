@@ -38,23 +38,28 @@ export default function Layout({ children }: Props) {
       </main>
 
       {!isSession && user && (
-        <nav className="bg-white border-t border-warm-200 flex flex-shrink-0 pb-safe">
-          {nav.map(({ to, icon: Icon, label }) => {
-            const active = location.pathname === to;
-            return (
-              <Link
-                key={to}
-                to={to}
-                className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs transition-colors ${
-                  active ? 'text-navy font-medium' : 'text-warm-400 hover:text-navy'
-                }`}
-              >
-                <Icon size={20} />
-                <span>{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex-shrink-0 bg-navy">
+          <nav className="bg-white border-t border-warm-200 flex">
+            {nav.map(({ to, icon: Icon, label }) => {
+              const active = location.pathname === to;
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs transition-colors ${
+                    active ? 'text-navy font-medium' : 'text-warm-400 hover:text-navy'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+          {/* Safe-area spacer — colored navy so the system gesture area
+              blends with the brand instead of showing as a white gap. */}
+          <div className="pb-safe" />
+        </div>
       )}
     </div>
   );
