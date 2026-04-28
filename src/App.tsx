@@ -8,6 +8,7 @@ import BibleBrowserPage from './pages/BibleBrowserPage';
 import SessionPage from './pages/SessionPage';
 import { JournalListPage, JournalEntryPage } from './pages/JournalPage';
 import ProfilePage from './pages/ProfilePage';
+import AboutPage from './pages/AboutPage';
 
 function ProtectedRoutes() {
   const user = useStore((s) => s.user);
@@ -21,6 +22,7 @@ function ProtectedRoutes() {
         <Route path="/journal" element={<JournalListPage />} />
         <Route path="/journal/:id" element={<JournalEntryPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>

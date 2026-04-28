@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, BookMarked, Home, User } from 'lucide-react';
+import { BookOpen, BookMarked, Home, User, Info } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 interface Props {
@@ -15,6 +15,7 @@ export default function Layout({ children }: Props) {
     { to: '/bible', icon: BookOpen, label: 'Bible' },
     { to: '/journal', icon: BookMarked, label: 'Journal' },
     { to: '/profile', icon: User, label: 'Profile' },
+    { to: '/about', icon: Info, label: 'About' },
   ];
 
   const isSession = location.pathname.startsWith('/session');
