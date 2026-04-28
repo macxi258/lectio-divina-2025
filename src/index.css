@@ -7,11 +7,24 @@
     box-sizing: border-box;
   }
 
+  /* Prevent pinch-to-zoom and double-tap-zoom across the whole app.
+     The meta viewport tag handles iOS; touch-action: manipulation also
+     suppresses the 300ms tap delay. */
+  html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     margin: 0;
     background-color: #FAF7F2;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Belt-and-suspenders: also block touch zoom gestures at the body level. */
+    touch-action: manipulation;
+    overscroll-behavior: none;
   }
 
   #root {

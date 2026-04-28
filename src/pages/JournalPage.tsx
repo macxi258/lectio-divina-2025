@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Star, StarOff, Tag, Trash2, ChevronLeft, Search, CheckCircle, Circle,
+  Star, StarOff, Tag, Trash2, ChevronDown, ChevronUp, Search, CheckCircle, Circle,
   BookMarked, Heart
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -146,6 +146,7 @@ export function JournalEntryPage() {
   const [newTag, setNewTag] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showPassage, setShowPassage] = useState(true);
 
   if (!session || !id) {
     return (
@@ -173,41 +174,54 @@ export function JournalEntryPage() {
 
   return (
     <div className="h-full flex flex-col bg-cream">
-      {/* Header */}
-      <div className="bg-navy text-white px-5 pt-4 pb-6 flex-shrink-0">
-        <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => navigate('/journal')}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
-            aria-label="Back"
-          >
-            <ChevronLeft size={22} />
-          </button>
-          <div className="flex-1" />
+      {/* Compact header — favourite star sits on the same row as the reference */}
+      <div className="bg-navy text-white px-5 pt-4 pb-4 flex-shrink-0">
+        <p className="text-gold/80 text-xs uppercase tracking-widest mb-1 font-medium">Scripture</p>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="font-serif text-2xl font-medium min-w-0 break-words">{session.scriptureRef}</h1>
           <button
             onClick={() => toggleFavourite(id)}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
             aria-label={session.isFavourite ? 'Remove from favourites' : 'Add to favourites'}
           >
             {session.isFavourite ? (
-              <Star size={20} className="text-gold fill-gold" />
+              <Star size={22} className="text-gold fill-gold" />
             ) : (
-              <StarOff size={20} className="text-white/50" />
+              <StarOff size={22} className="text-white/50" />
             )}
           </button>
         </div>
-        <p className="text-gold/80 text-xs uppercase tracking-widest mb-1 font-medium">Scripture</p>
-        <h1 className="font-serif text-2xl font-medium">{session.scriptureRef}</h1>
         <p className="text-white/50 text-sm mt-1">
           {session.dateCompleted ? format(new Date(session.dateCompleted), 'EEEE, MMMM d, yyyy') : ''}
         </p>
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 py-5 flex flex-col gap-5 max-w-lg mx-auto w-full">
-        {/* Scripture text */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-warm-100">
-          <p className="text-xs text-warm-400 uppercase tracking-wide mb-3">Passage</p>
-          <p className="font-serif text-warm-700 text-sm leading-loose whitespace-pre-wrap break-words">{session.scriptureText}</p>
+        {/* Collapsible passage — flex-shrink-0 prevents it being squashed
+            when there are many reflection cards below */}
+        <div className="bg-white rounded-2xl shadow-sm border border-warm-200 overflow-hidden flex-shrink-0">
+          <button
+            onClick={() => setShowPassage((v) => !v)}
+            className="w-full flex items-center justify-between gap-3 px-5 py-3 text-left hover:bg-warm-50 transition-colors"
+          >
+            <p className="text-xs text-navy uppercase tracking-wide font-semibold">Passage</p>
+            {showPassage
+              ? <ChevronUp size={18} className="text-navy" />
+              : <ChevronDown size={18} className="text-navy" />}
+          </button>
+          {showPassage && (
+            <div className="border-t border-warm-100 px-5 py-4 max-h-64 overflow-y-auto">
+              {session.scriptureText?.trim() ? (
+                <p className="font-serif text-warm-700 text-sm leading-loose whitespace-pre-wrap break-words">
+                  {session.scriptureText}
+                </p>
+              ) : (
+                <p className="font-serif text-warm-400 text-sm italic">
+                  No scripture text was saved with this entry.
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Reflections */}
