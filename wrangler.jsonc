@@ -10,5 +10,10 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ]
+  ],
+   "routes": [
+    {
+      "pattern": "lectiodivinaprayer.com/*",
+      "zone_name": "lectiodivinaprayer.com"
+    }]
 }
