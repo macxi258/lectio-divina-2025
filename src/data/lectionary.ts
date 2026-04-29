@@ -1,6 +1,10 @@
 // Catholic Sunday Lectionary (Roman Rite)
-// Format per reading: [display_ref, book_api_name, chapter, verse_start, verse_end]
-type R = readonly [string, string, number, number, number];
+// Format per reading:
+//   [display_ref, book_api_name, chapter, verse_start, verse_end]                (single chapter)
+//   [display_ref, book_api_name, chapter, verse_start, verse_end, end_chapter]   (cross-chapter, e.g. Acts 12:24–13:5)
+type R =
+  | readonly [string, string, number, number, number]
+  | readonly [string, string, number, number, number, number];
 
 interface Entry {
   first: R;
@@ -34,7 +38,7 @@ export const YEAR_A: Table = {
   'lent-3':        { first: ['Exod 17:3-7','exodus',17,3,7],     psalm: ['Ps 95:1-2,6-9','psalms',95,1,9],     second: ['Rom 5:1-2,5-8','romans',5,1,8],      gospel: ['John 4:5-42','john',4,5,42] },
   'lent-4':        { first: ['1 Sam 16:1b,6-7,10-13a','1+samuel',16,1,13],psalm: ['Ps 23:1-6','psalms',23,1,6],second: ['Eph 5:8-14','ephesians',5,8,14],     gospel: ['John 9:1-41','john',9,1,41] },
   'lent-5':        { first: ['Ezek 37:12-14','ezekiel',37,12,14],psalm: ['Ps 130:1-8','psalms',130,1,8],       second: ['Rom 8:8-11','romans',8,8,11],         gospel: ['John 11:1-45','john',11,1,45] },
-  'palm-sunday':   { first: ['Isa 50:4-7','isaiah',50,4,7],      psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24],second: ['Phil 2:6-11','philippians',2,6,11], gospel: ['Matt 26:14-27:66','matthew',26,14,27] },
+  'palm-sunday':   { first: ['Isa 50:4-7','isaiah',50,4,7],      psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24],second: ['Phil 2:6-11','philippians',2,6,11], gospel: ['Matt 26:14-27:66','matthew',26,14,66,27] },
   'easter-1':      { first: ['Acts 10:34a,37-43','acts',10,34,43],psalm: ['Ps 118:1-2,16-17,22-23','psalms',118,1,23],second: ['Col 3:1-4','colossians',3,1,4], gospel: ['John 20:1-9','john',20,1,9] },
   'easter-2':      { first: ['Acts 2:42-47','acts',2,42,47],     psalm: ['Ps 118:2-4,13-15,22-24','psalms',118,2,24],second: ['1 Pet 1:3-9','1+peter',1,3,9], gospel: ['John 20:19-31','john',20,19,31] },
   'easter-3':      { first: ['Acts 2:14,22-33','acts',2,14,33],  psalm: ['Ps 16:1-2,5,7-11','psalms',16,1,11], second: ['1 Pet 1:17-21','1+peter',1,17,21],  gospel: ['Luke 24:13-35','luke',24,13,35] },
@@ -46,7 +50,7 @@ export const YEAR_A: Table = {
   'trinity':       { first: ['Exod 34:4b-6,8-9','exodus',34,4,9],psalm: ['Dan 3:52-55','daniel',3,52,55],      second: ['2 Cor 13:11-13','2+corinthians',13,11,13], gospel: ['John 3:16-18','john',3,16,18] },
   'corpus-christi':{ first: ['Deut 8:2-3,14b-16a','deuteronomy',8,2,16],psalm: ['Ps 147:12-15,19-20','psalms',147,12,20],second: ['1 Cor 10:16-17','1+corinthians',10,16,17], gospel: ['John 6:51-58','john',6,51,58] },
   'ot-10':         { first: ['Hos 6:3-6','hosea',6,3,6],          psalm: ['Ps 50:1,8,12-15','psalms',50,1,15],  second: ['Rom 4:18-25','romans',4,18,25],      gospel: ['Matt 9:9-13','matthew',9,9,13] },
-  'ot-11':         { first: ['Exod 19:2-6a','exodus',19,2,6],    psalm: ['Ps 100:1-3,5','psalms',100,1,5],     second: ['Rom 5:6-11','romans',5,6,11],         gospel: ['Matt 9:36-10:8','matthew',9,36,10] },
+  'ot-11':         { first: ['Exod 19:2-6a','exodus',19,2,6],    psalm: ['Ps 100:1-3,5','psalms',100,1,5],     second: ['Rom 5:6-11','romans',5,6,11],         gospel: ['Matt 9:36-10:8','matthew',9,36,8,10] },
   'ot-12':         { first: ['Jer 20:10-13','jeremiah',20,10,13], psalm: ['Ps 69:8-10,14,17,33-35','psalms',69,8,35],second: ['Rom 5:12-15','romans',5,12,15],  gospel: ['Matt 10:26-33','matthew',10,26,33] },
   'ot-13':         { first: ['2 Kings 4:8-11,14-16a','2+kings',4,8,16],psalm: ['Ps 89:2-3,16-19','psalms',89,2,19],second: ['Rom 6:3-4,8-11','romans',6,3,11], gospel: ['Matt 10:37-42','matthew',10,37,42] },
   'ot-14':         { first: ['Zech 9:9-10','zechariah',9,9,10],  psalm: ['Ps 145:1-2,8-11,13-14','psalms',145,1,14],second: ['Rom 8:9,11-13','romans',8,9,13], gospel: ['Matt 11:25-30','matthew',11,25,30] },
@@ -59,7 +63,7 @@ export const YEAR_A: Table = {
   'ot-21':         { first: ['Isa 22:19-23','isaiah',22,19,23],   psalm: ['Ps 138:1-3,6,8','psalms',138,1,8],   second: ['Rom 11:33-36','romans',11,33,36],    gospel: ['Matt 16:13-20','matthew',16,13,20] },
   'ot-22':         { first: ['Jer 20:7-9','jeremiah',20,7,9],     psalm: ['Ps 63:2-6,8-9','psalms',63,2,9],     second: ['Rom 12:1-2','romans',12,1,2],        gospel: ['Matt 16:21-27','matthew',16,21,27] },
   'ot-23':         { first: ['Ezek 33:7-9','ezekiel',33,7,9],     psalm: ['Ps 95:1-2,6-9','psalms',95,1,9],     second: ['Rom 13:8-10','romans',13,8,10],      gospel: ['Matt 18:15-20','matthew',18,15,20] },
-  'ot-24':         { first: ['Sir 27:30-28:7','sirach',27,30,28], psalm: ['Ps 103:1-4,9-12','psalms',103,1,12], second: ['Rom 14:7-9','romans',14,7,9],        gospel: ['Matt 18:21-35','matthew',18,21,35] },
+  'ot-24':         { first: ['Sir 27:30-28:7','sirach',27,30,7,28], psalm: ['Ps 103:1-4,9-12','psalms',103,1,12], second: ['Rom 14:7-9','romans',14,7,9],        gospel: ['Matt 18:21-35','matthew',18,21,35] },
   'ot-25':         { first: ['Isa 55:6-9','isaiah',55,6,9],       psalm: ['Ps 145:2-3,8-9,17-18','psalms',145,2,18],second: ['Phil 1:20c-24,27a','philippians',1,20,27], gospel: ['Matt 20:1-16a','matthew',20,1,16] },
   'ot-26':         { first: ['Ezek 18:25-28','ezekiel',18,25,28], psalm: ['Ps 25:4-9','psalms',25,4,9],          second: ['Phil 2:1-11','philippians',2,1,11],  gospel: ['Matt 21:28-32','matthew',21,28,32] },
   'ot-27':         { first: ['Isa 5:1-7','isaiah',5,1,7],          psalm: ['Ps 80:9,12-16,19-20','psalms',80,9,20],second: ['Phil 4:6-9','philippians',4,6,9],  gospel: ['Matt 21:33-43','matthew',21,33,43] },
@@ -87,7 +91,7 @@ export const YEAR_B: Table = {
   'lent-3':       { first: ['Exod 20:1-17','exodus',20,1,17],              psalm: ['Ps 19:8-11','psalms',19,8,11],            second: ['1 Cor 1:22-25','1+corinthians',1,22,25], gospel: ['John 2:13-25','john',2,13,25] },
   'lent-4':       { first: ['2 Chr 36:14-16,19-23','2+chronicles',36,14,23],psalm: ['Ps 137:1-6','psalms',137,1,6],          second: ['Eph 2:4-10','ephesians',2,4,10],        gospel: ['John 3:14-21','john',3,14,21] },
   'lent-5':       { first: ['Jer 31:31-34','jeremiah',31,31,34],           psalm: ['Ps 51:3-4,12-15','psalms',51,3,15],       second: ['Heb 5:7-9','hebrews',5,7,9],            gospel: ['John 12:20-33','john',12,20,33] },
-  'palm-sunday':  { first: ['Isa 50:4-7','isaiah',50,4,7],                 psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24], second: ['Phil 2:6-11','philippians',2,6,11],     gospel: ['Mark 14:1-15:47','mark',14,1,15] },
+  'palm-sunday':  { first: ['Isa 50:4-7','isaiah',50,4,7],                 psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24], second: ['Phil 2:6-11','philippians',2,6,11],     gospel: ['Mark 14:1-15:47','mark',14,1,47,15] },
   'easter-1':     { first: ['Acts 10:34a,37-43','acts',10,34,43],          psalm: ['Ps 118:1-2,16-17,22-23','psalms',118,1,23],second: ['Col 3:1-4','colossians',3,1,4],        gospel: ['John 20:1-9','john',20,1,9] },
   'easter-2':     { first: ['Acts 4:32-35','acts',4,32,35],                psalm: ['Ps 118:2-4,13-15,22-24','psalms',118,2,24],second: ['1 John 5:1-6','1+john',5,1,6],        gospel: ['John 20:19-31','john',20,19,31] },
   'easter-3':     { first: ['Acts 3:13-15,17-19','acts',3,13,19],          psalm: ['Ps 4:2,4,7-9','psalms',4,2,9],           second: ['1 John 2:1-5a','1+john',2,1,5],        gospel: ['Luke 24:35-48','luke',24,35,48] },
@@ -103,7 +107,7 @@ export const YEAR_B: Table = {
 
 // ─── YEAR C ──────────────────────────────────────────────────────────────────
 export const YEAR_C: Table = {
-  'advent-1':     { first: ['Jer 33:14-16','jeremiah',33,14,16],            psalm: ['Ps 25:4-5,8-10,14','psalms',25,4,14],    second: ['1 Thess 3:12-4:2','1+thessalonians',3,12,4], gospel: ['Luke 21:25-28,34-36','luke',21,25,36] },
+  'advent-1':     { first: ['Jer 33:14-16','jeremiah',33,14,16],            psalm: ['Ps 25:4-5,8-10,14','psalms',25,4,14],    second: ['1 Thess 3:12-4:2','1+thessalonians',3,12,2,4], gospel: ['Luke 21:25-28,34-36','luke',21,25,36] },
   'advent-2':     { first: ['Bar 5:1-9','baruch',5,1,9],                    psalm: ['Ps 126:1-6','psalms',126,1,6],            second: ['Phil 1:4-6,8-11','philippians',1,4,11],  gospel: ['Luke 3:1-6','luke',3,1,6] },
   'advent-3':     { first: ['Zeph 3:14-18a','zephaniah',3,14,18],           psalm: ['Isa 12:2-6','isaiah',12,2,6],             second: ['Phil 4:4-7','philippians',4,4,7],        gospel: ['Luke 3:10-18','luke',3,10,18] },
   'advent-4':     { first: ['Mic 5:1-4a','micah',5,1,4],                    psalm: ['Ps 80:2-3,15-16,18-19','psalms',80,2,19], second: ['Heb 10:5-10','hebrews',10,5,10],         gospel: ['Luke 1:39-45','luke',1,39,45] },
@@ -112,11 +116,11 @@ export const YEAR_C: Table = {
   'epiphany':     { first: ['Isa 60:1-6','isaiah',60,1,6],                   psalm: ['Ps 72:1-2,7-8,10-13','psalms',72,1,13],  second: ['Eph 3:2-3a,5-6','ephesians',3,2,6],     gospel: ['Matt 2:1-12','matthew',2,1,12] },
   'baptism-lord': { first: ['Isa 40:1-5,9-11','isaiah',40,1,11],            psalm: ['Ps 104:1b-4,24-25,27-30','psalms',104,1,30],second: ['Titus 2:11-14;3:4-7','titus',2,11,3], gospel: ['Luke 3:15-16,21-22','luke',3,15,22] },
   'lent-1':       { first: ['Deut 26:4-10','deuteronomy',26,4,10],          psalm: ['Ps 91:1-2,10-15','psalms',91,1,15],      second: ['Rom 10:8-13','romans',10,8,13],          gospel: ['Luke 4:1-13','luke',4,1,13] },
-  'lent-2':       { first: ['Gen 15:5-12,17-18','genesis',15,5,18],         psalm: ['Ps 27:1,7-9,13-14','psalms',27,1,14],    second: ['Phil 3:17-4:1','philippians',3,17,4],   gospel: ['Luke 9:28b-36','luke',9,28,36] },
+  'lent-2':       { first: ['Gen 15:5-12,17-18','genesis',15,5,18],         psalm: ['Ps 27:1,7-9,13-14','psalms',27,1,14],    second: ['Phil 3:17-4:1','philippians',3,17,1,4],   gospel: ['Luke 9:28b-36','luke',9,28,36] },
   'lent-3':       { first: ['Exod 3:1-8a,13-15','exodus',3,1,15],           psalm: ['Ps 103:1-4,6-8,11','psalms',103,1,11],   second: ['1 Cor 10:1-6,10-12','1+corinthians',10,1,12], gospel: ['Luke 13:1-9','luke',13,1,9] },
   'lent-4':       { first: ['Josh 5:9a,10-12','joshua',5,9,12],             psalm: ['Ps 34:2-7','psalms',34,2,7],              second: ['2 Cor 5:17-21','2+corinthians',5,17,21], gospel: ['Luke 15:1-3,11-32','luke',15,1,32] },
   'lent-5':       { first: ['Isa 43:16-21','isaiah',43,16,21],              psalm: ['Ps 126:1-6','psalms',126,1,6],            second: ['Phil 3:8-14','philippians',3,8,14],     gospel: ['John 8:1-11','john',8,1,11] },
-  'palm-sunday':  { first: ['Isa 50:4-7','isaiah',50,4,7],                  psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24], second: ['Phil 2:6-11','philippians',2,6,11],     gospel: ['Luke 22:14-23:56','luke',22,14,23] },
+  'palm-sunday':  { first: ['Isa 50:4-7','isaiah',50,4,7],                  psalm: ['Ps 22:8-9,17-20,23-24','psalms',22,8,24], second: ['Phil 2:6-11','philippians',2,6,11],     gospel: ['Luke 22:14-23:56','luke',22,14,56,23] },
   'easter-1':     { first: ['Acts 10:34a,37-43','acts',10,34,43],           psalm: ['Ps 118:1-2,16-17,22-23','psalms',118,1,23],second: ['Col 3:1-4','colossians',3,1,4],        gospel: ['John 20:1-9','john',20,1,9] },
   'easter-2':     { first: ['Acts 5:12-16','acts',5,12,16],                  psalm: ['Ps 118:2-4,13-15,22-24','psalms',118,2,24],second: ['Rev 1:9-11a,12-13,17-19','revelation',1,9,19], gospel: ['John 20:19-31','john',20,19,31] },
   'easter-3':     { first: ['Acts 5:27b-32,40b-41','acts',5,27,41],         psalm: ['Ps 30:2,4-6,11-13','psalms',30,2,13],    second: ['Rev 5:11-14','revelation',5,11,14],     gospel: ['John 21:1-19','john',21,1,19] },
@@ -152,8 +156,8 @@ export const WEEKDAYS: Table = {
   'holyweek-tue': { first: ['Isa 49:1-6','isaiah',49,1,6], psalm: ['Ps 71:1-6,15,17','psalms',71,1,17], gospel: ['John 13:21-33,36-38','john',13,21,38] },
   'holyweek-wed': { first: ['Isa 50:4-9a','isaiah',50,4,9], psalm: ['Ps 69:8-10,21-22,31,33-34','psalms',69,8,34], gospel: ['Matt 26:14-25','matthew',26,14,25] },
   'holy-thu':     { first: ['Exod 12:1-8,11-14','exodus',12,1,14], psalm: ['Ps 116:12-13,15-18','psalms',116,12,18], gospel: ['John 13:1-15','john',13,1,15] },
-  'good-fri':     { first: ['Isa 52:13-53:12','isaiah',52,13,53], psalm: ['Ps 31:2,6,12-13,15-17,25','psalms',31,2,25], gospel: ['John 18:1-19:42','john',18,1,19] },
-  'holy-sat':     { first: ['Gen 1:1-2:2','genesis',1,1,2], psalm: ['Ps 104:1-2,5-6,10,12-14,24,35','psalms',104,1,35], gospel: ['Mark 16:1-7','mark',16,1,7] },
+  'good-fri':     { first: ['Isa 52:13-53:12','isaiah',52,13,12,53], psalm: ['Ps 31:2,6,12-13,15-17,25','psalms',31,2,25], gospel: ['John 18:1-19:42','john',18,1,42,19] },
+  'holy-sat':     { first: ['Gen 1:1-2:2','genesis',1,1,2,2], psalm: ['Ps 104:1-2,5-6,10,12-14,24,35','psalms',104,1,35], gospel: ['Mark 16:1-7','mark',16,1,7] },
 
   // ─── Easter Octave (Easter Mon - Sat) ──────────────────────────────────
   'easter-oct-mon': { first: ['Acts 2:14,22-33','acts',2,14,33], psalm: ['Ps 16:1-2,5,7-11','psalms',16,1,11], gospel: ['Matt 28:8-15','matthew',28,8,15] },
@@ -173,7 +177,7 @@ export const WEEKDAYS: Table = {
 
   // ─── Easter Week 3 ─────────────────────────────────────────────────────
   'easter-w3-mon': { first: ['Acts 6:8-15','acts',6,8,15], psalm: ['Ps 119:23-30','psalms',119,23,30], gospel: ['John 6:22-29','john',6,22,29] },
-  'easter-w3-tue': { first: ['Acts 7:51-8:1a','acts',7,51,8], psalm: ['Ps 31:3-4,6-8,17,21','psalms',31,3,21], gospel: ['John 6:30-35','john',6,30,35] },
+  'easter-w3-tue': { first: ['Acts 7:51-8:1a','acts',7,51,1,8], psalm: ['Ps 31:3-4,6-8,17,21','psalms',31,3,21], gospel: ['John 6:30-35','john',6,30,35] },
   'easter-w3-wed': { first: ['Acts 8:1b-8','acts',8,1,8], psalm: ['Ps 66:1-7','psalms',66,1,7], gospel: ['John 6:35-40','john',6,35,40] },
   'easter-w3-thu': { first: ['Acts 8:26-40','acts',8,26,40], psalm: ['Ps 66:8-9,16-17,20','psalms',66,8,20], gospel: ['John 6:44-51','john',6,44,51] },
   'easter-w3-fri': { first: ['Acts 9:1-20','acts',9,1,20], psalm: ['Ps 117:1-2','psalms',117,1,2], gospel: ['John 6:52-59','john',6,52,59] },
@@ -182,7 +186,7 @@ export const WEEKDAYS: Table = {
   // ─── Easter Week 4 ─────────────────────────────────────────────────────
   'easter-w4-mon': { first: ['Acts 11:1-18','acts',11,1,18], psalm: ['Ps 42:2-3; 43:3-4','psalms',42,2,4], gospel: ['John 10:11-18','john',10,11,18] },
   'easter-w4-tue': { first: ['Acts 11:19-26','acts',11,19,26], psalm: ['Ps 87:1-7','psalms',87,1,7], gospel: ['John 10:22-30','john',10,22,30] },
-  'easter-w4-wed': { first: ['Acts 12:24-13:5a','acts',12,24,13], psalm: ['Ps 67:2-3,5-6,8','psalms',67,2,8], gospel: ['John 12:44-50','john',12,44,50] },
+  'easter-w4-wed': { first: ['Acts 12:24-13:5a','acts',12,24,5,13], psalm: ['Ps 67:2-3,5-6,8','psalms',67,2,8], gospel: ['John 12:44-50','john',12,44,50] },
   'easter-w4-thu': { first: ['Acts 13:13-25','acts',13,13,25], psalm: ['Ps 89:2-3,21-22,25,27','psalms',89,2,27], gospel: ['John 13:16-20','john',13,16,20] },
   'easter-w4-fri': { first: ['Acts 13:26-33','acts',13,26,33], psalm: ['Ps 2:6-11','psalms',2,6,11], gospel: ['John 14:1-6','john',14,1,6] },
   'easter-w4-sat': { first: ['Acts 13:44-52','acts',13,44,52], psalm: ['Ps 98:1-4','psalms',98,1,4], gospel: ['John 14:7-14','john',14,7,14] },
@@ -196,7 +200,7 @@ export const WEEKDAYS: Table = {
   'easter-w5-sat': { first: ['Acts 16:1-10','acts',16,1,10], psalm: ['Ps 100:1-3,5','psalms',100,1,5], gospel: ['John 15:18-21','john',15,18,21] },
 
   // ─── Easter Week 6 ─────────────────────────────────────────────────────
-  'easter-w6-mon': { first: ['Acts 16:11-15','acts',16,11,15], psalm: ['Ps 149:1-6,9','psalms',149,1,9], gospel: ['John 15:26-16:4a','john',15,26,16] },
+  'easter-w6-mon': { first: ['Acts 16:11-15','acts',16,11,15], psalm: ['Ps 149:1-6,9','psalms',149,1,9], gospel: ['John 15:26-16:4a','john',15,26,4,16] },
   'easter-w6-tue': { first: ['Acts 16:22-34','acts',16,22,34], psalm: ['Ps 138:1-3,7-8','psalms',138,1,8], gospel: ['John 16:5-11','john',16,5,11] },
   'easter-w6-wed': { first: ['Acts 17:15,22-18:1','acts',17,15,18], psalm: ['Ps 148:1-2,11-14','psalms',148,1,14], gospel: ['John 16:12-15','john',16,12,15] },
   'easter-w6-thu': { first: ['Acts 18:1-8','acts',18,1,8], psalm: ['Ps 98:1-4','psalms',98,1,4], gospel: ['John 16:16-20','john',16,16,20] },
@@ -214,14 +218,14 @@ export const WEEKDAYS: Table = {
   // ─── Christmas Octave (Dec 26 - Dec 31) ────────────────────────────────
   'christmas-oct-dec26': { first: ['Acts 6:8-10; 7:54-59','acts',6,8,7], psalm: ['Ps 31:3-4,6,8,16-17','psalms',31,3,17], gospel: ['Matt 10:17-22','matthew',10,17,22] },
   'christmas-oct-dec27': { first: ['1 John 1:1-4','1+john',1,1,4], psalm: ['Ps 97:1-2,5-6,11-12','psalms',97,1,12], gospel: ['John 20:1a,2-8','john',20,1,8] },
-  'christmas-oct-dec28': { first: ['1 John 1:5-2:2','1+john',1,5,2], psalm: ['Ps 124:2-5,7-8','psalms',124,2,8], gospel: ['Matt 2:13-18','matthew',2,13,18] },
+  'christmas-oct-dec28': { first: ['1 John 1:5-2:2','1+john',1,5,2,2], psalm: ['Ps 124:2-5,7-8','psalms',124,2,8], gospel: ['Matt 2:13-18','matthew',2,13,18] },
   'christmas-oct-dec29': { first: ['1 John 2:3-11','1+john',2,3,11], psalm: ['Ps 96:1-3,5-6','psalms',96,1,6], gospel: ['Luke 2:22-35','luke',2,22,35] },
   'christmas-oct-dec30': { first: ['1 John 2:12-17','1+john',2,12,17], psalm: ['Ps 96:7-10','psalms',96,7,10], gospel: ['Luke 2:36-40','luke',2,36,40] },
   'christmas-oct-dec31': { first: ['1 John 2:18-21','1+john',2,18,21], psalm: ['Ps 96:1-2,11-13','psalms',96,1,13], gospel: ['John 1:1-18','john',1,1,18] },
 
   // ─── Days between Jan 2 and Epiphany ───────────────────────────────────
   'epiphany-pre-jan2': { first: ['1 John 2:22-28','1+john',2,22,28], psalm: ['Ps 98:1-4','psalms',98,1,4], gospel: ['John 1:19-28','john',1,19,28] },
-  'epiphany-pre-jan3': { first: ['1 John 2:29-3:6','1+john',2,29,3], psalm: ['Ps 98:1,3-6','psalms',98,1,6], gospel: ['John 1:29-34','john',1,29,34] },
+  'epiphany-pre-jan3': { first: ['1 John 2:29-3:6','1+john',2,29,6,3], psalm: ['Ps 98:1,3-6','psalms',98,1,6], gospel: ['John 1:29-34','john',1,29,34] },
   'epiphany-pre-jan4': { first: ['1 John 3:7-10','1+john',3,7,10], psalm: ['Ps 98:1,7-9','psalms',98,1,9], gospel: ['John 1:35-42','john',1,35,42] },
   'epiphany-pre-jan5': { first: ['1 John 3:11-21','1+john',3,11,21], psalm: ['Ps 100:1-5','psalms',100,1,5], gospel: ['John 1:43-51','john',1,43,51] },
   'epiphany-pre-jan6': { first: ['1 John 5:5-13','1+john',5,5,13], psalm: ['Ps 147:12-15,19-20','psalms',147,12,20], gospel: ['Mark 1:7-11','mark',1,7,11] },
@@ -229,10 +233,10 @@ export const WEEKDAYS: Table = {
   'epiphany-pre-jan8': { first: ['1 John 5:5-13','1+john',5,5,13], psalm: ['Ps 147:12-15,19-20','psalms',147,12,20], gospel: ['Luke 5:12-16','luke',5,12,16] },
 
   // ─── Days after Epiphany (before Baptism) ──────────────────────────────
-  'epiphany-post-mon': { first: ['1 John 3:22-4:6','1+john',3,22,4], psalm: ['Ps 2:7-12','psalms',2,7,12], gospel: ['Matt 4:12-17,23-25','matthew',4,12,25] },
+  'epiphany-post-mon': { first: ['1 John 3:22-4:6','1+john',3,22,6,4], psalm: ['Ps 2:7-12','psalms',2,7,12], gospel: ['Matt 4:12-17,23-25','matthew',4,12,25] },
   'epiphany-post-tue': { first: ['1 John 4:7-10','1+john',4,7,10], psalm: ['Ps 72:1-4,7-8','psalms',72,1,8], gospel: ['Mark 6:34-44','mark',6,34,44] },
   'epiphany-post-wed': { first: ['1 John 4:11-18','1+john',4,11,18], psalm: ['Ps 72:1-2,10,12-13','psalms',72,1,13], gospel: ['Mark 6:45-52','mark',6,45,52] },
-  'epiphany-post-thu': { first: ['1 John 4:19-5:4','1+john',4,19,5], psalm: ['Ps 72:1-2,14-15,17','psalms',72,1,17], gospel: ['Luke 4:14-22a','luke',4,14,22] },
+  'epiphany-post-thu': { first: ['1 John 4:19-5:4','1+john',4,19,4,5], psalm: ['Ps 72:1-2,14-15,17','psalms',72,1,17], gospel: ['Luke 4:14-22a','luke',4,14,22] },
   'epiphany-post-fri': { first: ['1 John 5:5-13','1+john',5,5,13], psalm: ['Ps 147:12-15,19-20','psalms',147,12,20], gospel: ['Luke 5:12-16','luke',5,12,16] },
   'epiphany-post-sat': { first: ['1 John 5:14-21','1+john',5,14,21], psalm: ['Ps 149:1-6,9','psalms',149,1,9], gospel: ['John 3:22-30','john',3,22,30] },
 
@@ -298,7 +302,7 @@ export const WEEKDAYS: Table = {
   'advent-w1-wed': { first: ['Isa 25:6-10a','isaiah',25,6,10], psalm: ['Ps 23:1-6','psalms',23,1,6], gospel: ['Matt 15:29-37','matthew',15,29,37] },
   'advent-w1-thu': { first: ['Isa 26:1-6','isaiah',26,1,6], psalm: ['Ps 118:1,8-9,19-21,25-27','psalms',118,1,27], gospel: ['Matt 7:21,24-27','matthew',7,21,27] },
   'advent-w1-fri': { first: ['Isa 29:17-24','isaiah',29,17,24], psalm: ['Ps 27:1,4,13-14','psalms',27,1,14], gospel: ['Matt 9:27-31','matthew',9,27,31] },
-  'advent-w1-sat': { first: ['Isa 30:19-21,23-26','isaiah',30,19,26], psalm: ['Ps 147:1-6','psalms',147,1,6], gospel: ['Matt 9:35-10:1,5a,6-8','matthew',9,35,10] },
+  'advent-w1-sat': { first: ['Isa 30:19-21,23-26','isaiah',30,19,26], psalm: ['Ps 147:1-6','psalms',147,1,6], gospel: ['Matt 9:35-10:1,5a,6-8','matthew',9,35,8,10] },
 
   // ─── Advent Week 2 ─────────────────────────────────────────────────────
   'advent-w2-mon': { first: ['Isa 35:1-10','isaiah',35,1,10], psalm: ['Ps 85:9-14','psalms',85,9,14], gospel: ['Luke 5:17-26','luke',5,17,26] },
@@ -372,7 +376,7 @@ export const WEEKDAYS: Table = {
   'ot-w14-sat-II': { first: ['Isa 6:1-8','isaiah',6,1,8], psalm: ['Ps 93:1-2,5','psalms',93,1,5], gospel: ['Matt 10:24-33','matthew',10,24,33] },
 
   // ─── Ordinary Time Year II — Week 15 ───────────────────────────────────
-  'ot-w15-mon-II': { first: ['Isa 1:10-17','isaiah',1,10,17], psalm: ['Ps 50:8-9,16-17,21,23','psalms',50,8,23], gospel: ['Matt 10:34-11:1','matthew',10,34,11] },
+  'ot-w15-mon-II': { first: ['Isa 1:10-17','isaiah',1,10,17], psalm: ['Ps 50:8-9,16-17,21,23','psalms',50,8,23], gospel: ['Matt 10:34-11:1','matthew',10,34,1,11] },
   'ot-w15-tue-II': { first: ['Isa 7:1-9','isaiah',7,1,9], psalm: ['Ps 48:2-8','psalms',48,2,8], gospel: ['Matt 11:20-24','matthew',11,20,24] },
   'ot-w15-wed-II': { first: ['Isa 10:5-7,13b-16','isaiah',10,5,16], psalm: ['Ps 94:5-10,14-15','psalms',94,5,15], gospel: ['Matt 11:25-27','matthew',11,25,27] },
   'ot-w15-thu-II': { first: ['Isa 26:7-9,12,16-19','isaiah',26,7,19], psalm: ['Ps 102:13-21','psalms',102,13,21], gospel: ['Matt 11:28-30','matthew',11,28,30] },

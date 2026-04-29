@@ -8,9 +8,13 @@ export interface DailyReading {
   title: string;
   ref: string;
   bookApiName: string;
+  /** Start chapter. */
   chapter: number;
   verseStart?: number;
+  /** End verse — interpreted in the end chapter when `endChapter` is set. */
   verseEnd?: number;
+  /** Set when the passage spans two chapters, e.g. Acts 12:24–13:5. */
+  endChapter?: number;
 }
 
 export interface DailyReadingsResult {
@@ -18,12 +22,33 @@ export interface DailyReadingsResult {
   readings: DailyReading[];
 }
 
+/**
+ * Read a lectionary tuple. The tuple shape is:
+ *   [displayRef, bookApiName, chapter, verseStart, verseEnd]               (single-chapter)
+ *   [displayRef, bookApiName, chapter, verseStart, verseEnd, endChapter]   (cross-chapter)
+ */
+function pick(t: readonly (string | number)[]): {
+  ref: string;
+  bookApiName: string;
+  chapter: number;
+  verseStart: number;
+  verseEnd: number;
+  endChapter?: number;
+} {
+  return {
+    ref: t[0] as string,
+    bookApiName: t[1] as string,
+    chapter: t[2] as number,
+    verseStart: t[3] as number,
+    verseEnd: t[4] as number,
+    endChapter: t[5] as number | undefined,
+  };
+}
+
 export function getDailyReadings(date: Date): DailyReadingsResult {
   const day = getLiturgicalDay(date);
   if (!day) return { day: null, readings: [] };
 
-  // Sunday → look up cycle-specific table.
-  // Weekday → look up the WEEKDAYS table (which contains Year I/II suffixed keys for OT).
   const entry = day.isSunday
     ? LECTIONARY[day.cycle][day.key]
     : WEEKDAYS[day.key];
@@ -32,19 +57,19 @@ export function getDailyReadings(date: Date): DailyReadingsResult {
 
   const readings: DailyReading[] = [];
 
-  const [firstRef, firstBook, firstCh, firstVs, firstVe] = entry.first;
-  readings.push({ type: 'first', title: 'First Reading', ref: firstRef, bookApiName: firstBook, chapter: firstCh, verseStart: firstVs, verseEnd: firstVe });
+  const f = pick(entry.first);
+  readings.push({ type: 'first', title: 'First Reading', ...f });
 
-  const [psalmRef, psalmBook, psalmCh, psalmVs, psalmVe] = entry.psalm;
-  readings.push({ type: 'psalm', title: 'Responsorial Psalm', ref: psalmRef, bookApiName: psalmBook, chapter: psalmCh, verseStart: psalmVs, verseEnd: psalmVe });
+  const p = pick(entry.psalm);
+  readings.push({ type: 'psalm', title: 'Responsorial Psalm', ...p });
 
   if (entry.second) {
-    const [secRef, secBook, secCh, secVs, secVe] = entry.second;
-    readings.push({ type: 'second', title: 'Second Reading', ref: secRef, bookApiName: secBook, chapter: secCh, verseStart: secVs, verseEnd: secVe });
+    const s = pick(entry.second);
+    readings.push({ type: 'second', title: 'Second Reading', ...s });
   }
 
-  const [gospelRef, gospelBook, gospelCh, gospelVs, gospelVe] = entry.gospel;
-  readings.push({ type: 'gospel', title: 'Gospel', ref: gospelRef, bookApiName: gospelBook, chapter: gospelCh, verseStart: gospelVs, verseEnd: gospelVe });
+  const g = pick(entry.gospel);
+  readings.push({ type: 'gospel', title: 'Gospel', ...g });
 
   return { day, readings };
 }

@@ -219,6 +219,7 @@ export default function BibleBrowserPage() {
         reading.verseStart,
         reading.verseEnd,
         translation,
+        reading.endChapter,
       );
       const text = formatVerseText(passage);
       setPassageText(text);
