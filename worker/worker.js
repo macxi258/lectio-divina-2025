@@ -22,11 +22,11 @@ const TARGET = 'https://rest.api.bible';
 // Add your PWA / dev / native origins here. Cloudflare also accepts the
 // special value '*', but a fixed allow-list is safer.
 const ALLOWED_ORIGINS = [
-  'http://localhost:5173',          // Vite dev server
-  'http://localhost:4173',          // Vite preview
-  'https://localhost',              // Capacitor Android (newer)
-  'capacitor://localhost',          // Capacitor iOS / older Android
-  // 'https://lectio-divina.your-domain.com', // <-- add your hosted PWA origin once you deploy it
+  'http://localhost:5173',           // Vite dev server
+  'http://localhost:4173',           // Vite preview
+  'https://localhost',               // Capacitor Android (newer)
+  'capacitor://localhost',           // Capacitor iOS / older Android
+  'https://lectiodivinaprayer.com',  // production PWA
 ];
 
 function corsHeaders(origin) {

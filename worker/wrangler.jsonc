@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lectio-bible-proxy",
+  "main": "worker.js",
+  "compatibility_date": "2025-01-01",
+  "workers_dev": false,
+
+  // Deploy on a dedicated subdomain. Cloudflare Pages owns
+  // lectiodivinaprayer.com/* (with SPA fallback) — putting the proxy on
+  // bible.lectiodivinaprayer.com keeps it isolated from that fallback.
+  "routes": [
+    {
+      "pattern": "bible.lectiodivinaprayer.com/*",
+      "zone_name": "lectiodivinaprayer.com"
+    }
+  ]
+
+  // The BIBLE_API_KEY secret is uploaded out-of-band with:
+  //   wrangler secret put BIBLE_API_KEY --name lectio-bible-proxy
+  // It lives in Cloudflare's encrypted secret store. Don't put it here.
+}
