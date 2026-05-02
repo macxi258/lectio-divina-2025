@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart, Church, Globe2, BookOpen, ChevronLeft } from 'lucide-react';
+import { BookOpen, ChevronLeft } from 'lucide-react';
 import Button from '../components/shared/Button';
 
 export default function AboutPage() {
