@@ -1,0 +1,15 @@
+{
+  "name": "lectio-bible-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that proxies API.Bible with a server-side key.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "set-key": "wrangler secret put BIBLE_API_KEY",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^3.95.0"
+  }
+}

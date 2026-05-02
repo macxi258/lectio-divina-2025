@@ -29,3 +29,6 @@ dist-ssr
 !.dev.vars.example
 .env*
 !.env.example
+# .env.production is committed because it only contains non-secret URLs
+# (the API.Bible secret lives in the Cloudflare Worker, not the bundle).
+!.env.production

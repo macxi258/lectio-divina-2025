@@ -1,0 +1,8 @@
+name = "lectio-bible-proxy"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# The BIBLE_API_KEY secret is set out-of-band with:
+#   wrangler secret put BIBLE_API_KEY
+# Don't put the key in this file or in the repo — secrets only live on
+# Cloudflare's servers and are never shown again after they are set.
