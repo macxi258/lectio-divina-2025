@@ -30,51 +30,6 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Created by */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-warm-100 flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-navy">
-            <Heart size={18} className="text-gold" />
-            <h3 className="font-serif font-medium text-base">Created with love by</h3>
-          </div>
-          <div className="flex items-center justify-center gap-3 py-2">
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center text-gold text-xl font-serif font-medium mx-auto mb-1">
-                M
-              </div>
-              <p className="font-serif text-navy text-sm font-medium">Mary Ann</p>
-            </div>
-            <div className="text-warm-300 text-xl font-serif">&amp;</div>
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center text-gold text-xl font-serif font-medium mx-auto mb-1">
-                A
-              </div>
-              <p className="font-serif text-navy text-sm font-medium">Andres</p>
-            </div>
-          </div>
-          <p className="text-warm-500 text-sm leading-relaxed text-center italic">
-            Built as a quiet companion for daily prayer — that the Word of God may
-            shape every moment of our lives.
-          </p>
-        </div>
-
-        {/* Mission */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-gold flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-navy">
-            <Church size={18} className="text-gold" />
-            <h3 className="font-serif font-medium text-base">Our Mission</h3>
-          </div>
-          <p className="text-warm-700 text-sm leading-relaxed font-serif">
-            Any funds collected through this app are distributed to Catholic
-            churches and parishes in the <span className="font-medium text-navy">Philippines</span>,
-            supporting their ministries, communities, and the spiritual care of
-            their people.
-          </p>
-          <div className="flex items-center gap-2 text-warm-500 text-xs italic mt-1">
-            <Globe2 size={14} className="text-gold" />
-            <span>Serving parishes across the Philippines</span>
-          </div>
-        </div>
-
         {/* What is Lectio Divina */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-warm-100 flex flex-col gap-3">
           <div className="flex items-center gap-2 text-navy">
@@ -100,6 +55,9 @@ export default function AboutPage() {
         <div className="text-center py-2">
           <p className="font-serif text-warm-500 italic text-sm">
             "May the peace of Christ guard your heart and mind."
+          </p>
+          <p className="font-serif text-warm-500 bold text-sm">
+            Mary and Andres
           </p>
         </div>
 
