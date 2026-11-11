@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronDown, ChevronUp, Search, Loader2, CalendarDays, BookOpen } from 'lucide-react';
 import { BIBLE_BOOKS, OLD_TESTAMENT, NEW_TESTAMENT } from '../data/bibleBooks';
 import type { BibleBook } from '../types';
 import { fetchPassage, buildReference, formatVerseText } from '../utils/bibleApi';
-import { getDailyReadings, type DailyReading } from '../utils/dailyReadings';
+import { getDailyReadings, fetchReadingPassage, type DailyReading } from '../utils/dailyReadings';
 import { useStore } from '../store/useStore';
 import Button from '../components/shared/Button';
 import { OPENING_PRAYERS } from '../data/prayers';
@@ -34,12 +34,85 @@ interface DailyPanelProps {
   onSelectReading: (reading: DailyReading) => void;
 }
 
+type ReadingText =
+  | { status: 'loading' }
+  | { status: 'error' }
+  | { status: 'unavailable' }
+  | { status: 'ok'; text: string };
+
+function ReadingBody({
+  state,
+  open,
+  onToggle,
+  usccbUrl,
+}: {
+  state?: ReadingText;
+  open: boolean;
+  onToggle: () => void;
+  usccbUrl: string;
+}) {
+  if (state?.status === 'unavailable') {
+    return (
+      <p className="text-warm-500 text-xs mt-2 leading-relaxed">
+        We can’t show this reading’s text reliably yet.{' '}
+        <a href={usccbUrl} target="_blank" rel="noopener noreferrer" className="text-navy underline hover:text-gold">
+          Read it on USCCB →
+        </a>
+      </p>
+    );
+  }
+  if (!state || state.status === 'loading') {
+    return (
+      <p className="flex items-center gap-1.5 text-warm-400 text-xs mt-2">
+        <Loader2 size={12} className="animate-spin" /> Loading reading…
+      </p>
+    );
+  }
+  if (state.status === 'error') {
+    return <p className="text-warm-400 text-xs mt-2">Couldn’t load the text. Tap “Use” to try again.</p>;
+  }
+  return (
+    <div className="mt-2">
+      <p className={`text-warm-700 text-sm leading-relaxed ${open ? '' : 'line-clamp-5'}`}>{state.text}</p>
+      {state.text.length > 280 && (
+        <button onClick={onToggle} className="text-xs text-navy underline mt-1 hover:text-gold">
+          {open ? 'Show less' : 'Read more'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function DailyReadingsPanel({ onSelectReading }: DailyPanelProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [loadingRef, setLoadingRef] = useState<string | null>(null);
+  const [texts, setTexts] = useState<Record<string, ReadingText>>({});
+  const [openRefs, setOpenRefs] = useState<Record<string, boolean>>({});
+  const translation = useStore((s) => s.user?.preferredTranslation) ?? 'dra';
 
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
   const { day, readings } = getDailyReadings(new Date());
+  const readingsKey = readings.map((r) => r.ref).join('|');
+  const usccbUrl = `https://bible.usccb.org/bible/readings/${format(new Date(), 'MMddyy')}.cfm`;
+
+  // Load today's readings automatically so the text is shown, not just links.
+  useEffect(() => {
+    if (!expanded || readings.length === 0) return;
+    let cancelled = false;
+    readings.forEach(async (r) => {
+      if (r.unverified) return; // text withheld; ReadingBody shows a link
+      let result: ReadingText;
+      try {
+        const p = await fetchReadingPassage(r, translation);
+        result = { status: 'ok', text: p.verses.map((v) => v.text.trim()).join(' ') || p.text };
+      } catch {
+        result = { status: 'error' };
+      }
+      if (!cancelled) setTexts((prev) => ({ ...prev, [`${translation}|${r.ref}`]: result }));
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- readingsKey stands in for readings
+  }, [expanded, readingsKey, translation]);
 
   if (!expanded) {
     return (
@@ -118,9 +191,15 @@ function DailyReadingsPanel({ onSelectReading }: DailyPanelProps) {
                   {reading.title}
                 </p>
                 <p className="font-serif text-navy text-sm font-medium">{reading.ref}</p>
+                <ReadingBody
+                  state={reading.unverified ? { status: 'unavailable' } : texts[`${translation}|${reading.ref}`]}
+                  usccbUrl={usccbUrl}
+                  open={!!openRefs[reading.ref]}
+                  onToggle={() => setOpenRefs((o) => ({ ...o, [reading.ref]: !o[reading.ref] }))}
+                />
               </div>
               <button
-                disabled={loadingRef === reading.ref}
+                disabled={loadingRef === reading.ref || reading.unverified}
                 onClick={async () => {
                   setLoadingRef(reading.ref);
                   try {
@@ -213,14 +292,7 @@ export default function BibleBrowserPage() {
     setError('');
     try {
       const translation = user?.preferredTranslation ?? 'dra';
-      const passage = await fetchPassage(
-        reading.bookApiName,
-        reading.chapter,
-        reading.verseStart,
-        reading.verseEnd,
-        translation,
-        reading.endChapter,
-      );
+      const passage = await fetchReadingPassage(reading, translation);
       const text = formatVerseText(passage);
       setPassageText(text);
       setPassageRef(passage.reference || reading.ref);
