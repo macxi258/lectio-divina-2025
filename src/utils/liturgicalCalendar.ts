@@ -206,6 +206,8 @@ export function getLiturgicalDay(date: Date): LiturgicalDay | null {
 }
 
 function ord(n: number): string {
-  if (n === 1) return '1st'; if (n === 2) return '2nd';
-  if (n === 3) return '3rd'; return `${n}th`;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  const suffix = ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[n % 10] ?? 'th';
+  return `${n}${suffix}`;
 }
