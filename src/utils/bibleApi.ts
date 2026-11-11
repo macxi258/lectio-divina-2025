@@ -1,5 +1,6 @@
 import type { ScripturePassage, TranslationId } from '../types';
 import { BIBLE_BOOKS } from '../data/bibleBooks';
+import { psalmTitleOffset } from '../data/psalmVerseOffsets';
 
 const BIBLE_API_BASE = 'https://bible-api.com';
 // All API.Bible traffic routes through our Cloudflare Worker proxy. The
@@ -52,6 +53,161 @@ function apiBibleIdFor(bookSlug: string, fallback = false): string | null {
  * we try API.Bible as a second pass.
  */
 export async function fetchPassage(
+  bookApiName: string,
+  chapter: number,
+  verseStart?: number,
+  verseEnd?: number,
+  translation: TranslationId = 'dra',
+  endChapter?: number,
+): Promise<ScripturePassage> {
+  // Primary: HelloAO (free, keyless, full Catholic canon). On any failure
+  // fall through to the previous bible-api.com / API.Bible routing.
+  try {
+    return await fetchFromHelloAo(bookApiName, chapter, verseStart, verseEnd, translation, endChapter);
+  } catch {
+    // fall through to legacy providers
+  }
+  return fetchLegacy(bookApiName, chapter, verseStart, verseEnd, translation, endChapter);
+}
+
+/** [chapter, verseStart|null, verseEnd|null, endChapter|null] */
+export type PassageSegment = readonly [number, number | null, number | null, number | null];
+
+/**
+ * Fetch a reading made of several verse ranges (e.g. Gen 2:7-9; 3:1-7) and
+ * join them, so verses the lectionary skips are not shown.
+ */
+export async function fetchPassageSegments(
+  bookApiName: string,
+  segments: readonly PassageSegment[],
+  translation: TranslationId,
+  displayRef: string,
+): Promise<ScripturePassage> {
+  const verses: ScripturePassage['verses'] = [];
+  const isPsalm = bookApiName === 'psalms';
+  for (const [ch, vs, ve, endCh] of segments) {
+    // Lectionary psalm verses count the title line; the WEB/KJV texts don't.
+    const startShift = isPsalm ? psalmTitleOffset(ch) : 0;
+    const endShift = isPsalm ? psalmTitleOffset(endCh ?? ch) : 0;
+    const start = vs != null ? Math.max(1, vs - startShift) : undefined;
+    // Only compare against the start verse when both are in the same chapter.
+    const end = ve != null
+      ? (endCh == null ? Math.max(start ?? 1, ve - endShift) : Math.max(1, ve - endShift))
+      : undefined;
+    const p = await fetchPassage(bookApiName, ch, start, end, translation, endCh ?? undefined);
+    verses.push(...p.verses);
+  }
+  return { reference: displayRef, text: verses.map((v) => v.text).join(' '), verses };
+}
+
+// ─── HelloAO Free Use Bible API (primary) ──────────────────────────────────
+
+const HELLOAO_BASE = 'https://bible.helloao.org/api';
+
+// Our translation ids → HelloAO translation ids.
+const HELLOAO_TRANSLATIONS: Record<TranslationId, string> = {
+  dra: 'eng_dra',   // Douay-Rheims 1899 (73 books)
+  web: 'eng_webc',  // World English Bible, Catholic edition (73 books)
+  kjv: 'eng_kja',   // King James Version + Apocrypha
+};
+
+// Our book ids mostly match HelloAO's USFM ids when upper-cased; these differ.
+const HELLOAO_ID_OVERRIDES: Record<string, string> = { eze: 'EZK', joe: 'JOL', nah: 'NAM' };
+
+interface HelloAoChapter {
+  book: { id: string; name: string; numberOfChapters: number };
+  chapter: { number: number; content: unknown[] };
+}
+
+const helloAoCache = new Map<string, Promise<HelloAoChapter>>();
+
+function loadHelloAoChapter(translationId: string, bookCode: string, chapter: number): Promise<HelloAoChapter> {
+  const url = `${HELLOAO_BASE}/${translationId}/${bookCode}/${chapter}.json`;
+  let p = helloAoCache.get(url);
+  if (!p) {
+    p = fetch(url).then((res) => {
+      if (!res.ok) throw new Error(`HelloAO error: ${res.status}`);
+      return res.json() as Promise<HelloAoChapter>;
+    });
+    p.catch(() => helloAoCache.delete(url)); // don't cache failures
+    helloAoCache.set(url, p);
+  }
+  return p;
+}
+
+// Verse content is a mix of strings, {text, poem} runs, footnote refs and
+// inline headings/line breaks. Keep only the readable text.
+function flattenVerseContent(content: unknown[]): string {
+  const parts: string[] = [];
+  for (const c of content) {
+    if (typeof c === 'string') parts.push(c);
+    else if (c && typeof (c as { text?: unknown }).text === 'string') parts.push((c as { text: string }).text);
+  }
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
+}
+
+async function fetchFromHelloAo(
+  bookApiName: string,
+  chapter: number,
+  verseStart?: number,
+  verseEnd?: number,
+  translation: TranslationId = 'dra',
+  endChapter?: number,
+): Promise<ScripturePassage> {
+  const book = BIBLE_BOOKS.find((b) => b.apiName === bookApiName);
+  if (!book) throw new Error(`Unknown book "${bookApiName}"`);
+  const translationId = HELLOAO_TRANSLATIONS[translation] ?? HELLOAO_TRANSLATIONS.web;
+
+  // The WEB Catholic edition splits Daniel and Esther into Hebrew/Greek
+  // books. Greek Daniel (DAG) uses Catholic numbering (3:52, 13, 14); Greek
+  // Esther is numbered differently from the lectionary, so defer to legacy.
+  let code = HELLOAO_ID_OVERRIDES[book.id] ?? book.id.toUpperCase();
+  if (translationId === 'eng_webc') {
+    if (book.id === 'est') throw new Error('Esther numbering differs in WEBC');
+    if (book.id === 'dan') code = 'DAG';
+  }
+
+  const lastChapter = endChapter && endChapter > chapter ? endChapter : chapter;
+  // A start verse with no end verse in a single chapter means just that verse
+  // (matches the previous bible-api.com behaviour for e.g. "John 3:16").
+  if (verseStart != null && verseEnd == null && lastChapter === chapter) verseEnd = verseStart;
+  const verses: ScripturePassage['verses'] = [];
+  let bookName = book.name;
+
+  for (let ch = chapter; ch <= lastChapter; ch++) {
+    const data = await loadHelloAoChapter(translationId, code, ch);
+    bookName = book.name;
+    for (const item of data.chapter.content as { type: string; number?: number; content?: unknown[] }[]) {
+      if (item.type !== 'verse' || item.number == null) continue;
+      const n = item.number;
+      if (verseStart != null) {
+        if (ch === chapter && n < verseStart) continue;
+        if (verseEnd != null && ch === lastChapter && n > verseEnd) continue;
+      } else if (verseEnd != null && ch === lastChapter && n > verseEnd) {
+        continue;
+      }
+      const text = flattenVerseContent(item.content ?? []);
+      if (text) verses.push({ book_id: code, book_name: bookName, chapter: ch, verse: n, text });
+    }
+  }
+
+  if (verses.length === 0) throw new Error('HelloAO returned no verses');
+
+  let reference = `${bookName} ${chapter}`;
+  if (verseStart != null) {
+    reference += `:${verseStart}`;
+    if (lastChapter !== chapter) reference += `–${lastChapter}:${verseEnd ?? verses[verses.length - 1].verse}`;
+    else if (verseEnd != null && verseEnd !== verseStart) reference += `–${verseEnd}`;
+  } else if (lastChapter !== chapter) {
+    reference += `–${lastChapter}`;
+  }
+
+  return { reference, text: verses.map((v) => v.text).join(' '), verses };
+}
+
+// ─── Legacy routing (fallback) ─────────────────────────────────────────────
+
+async function fetchLegacy(
   bookApiName: string,
   chapter: number,
   verseStart?: number,
