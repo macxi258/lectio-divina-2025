@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, ChevronLeft } from 'lucide-react';
 import Button from '../components/shared/Button';
+import ReleaseNotes from '../components/ReleaseNotes';
+import { APP_VERSION } from '../utils/version';
 
 export default function AboutPage() {
   const navigate = useNavigate();
@@ -28,7 +30,11 @@ export default function AboutPage() {
           <p className="text-white/60 text-sm italic">
             Sacred reading, meditation, and prayer.
           </p>
+          <p className="text-gold/80 text-xs mt-3 tracking-wide">Version {APP_VERSION}</p>
         </div>
+
+        {/* Release notes */}
+        <ReleaseNotes />
 
         {/* What is Lectio Divina */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-warm-100 flex flex-col gap-3">
